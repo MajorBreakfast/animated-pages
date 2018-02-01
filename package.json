@@ -1,0 +1,9 @@
+{
+  "name": "animated-pages",
+  "description": "Web component for smooth page transitions",
+  "version": "0.1.0",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/MajorBreakfast/animated-pages.git"
+  }
+}
