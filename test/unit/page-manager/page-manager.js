@@ -4,43 +4,38 @@ import { TemplateInstanceBase } from '../../../../@polymer/polymer/lib/utils/tem
 import pause from '../../utils/pause.js'
 
 describe('PageManager', () => {
-  let wrapperElement, pageManagerElement, pageManager
-  let getElement, getTextContent
+  let wrapperElement, pageManagerElement, getElement, getTextContent
   beforeEach(() => {
-    wrapperElement = document.createElement('x-wrapper')
+    wrapperElement = fixture('my-fixture')
     document.body.appendChild(wrapperElement)
     pageManagerElement = wrapperElement.$['page-manager-element']
-    pageManager = pageManagerElement.pageManager
     getElement = selector => pageManagerElement.querySelector(selector)
     getTextContent = x => getElement(x) ? getElement(x).textContent : undefined
-  })
-  afterEach(() => {
-    document.body.removeChild(wrapperElement)
   })
 
   describe('__getTemplate()', () =>{
     it('finds existing template', () => {
       const homeTemplate = pageManagerElement.querySelector('[name="home"]')
-      expect(pageManager.__getTemplate('home')).to.equal(homeTemplate)
+      expect(pageManagerElement.__getTemplate('home')).to.equal(homeTemplate)
     })
 
     it('returns undefined when template does not exist', () => {
-      expect(pageManager.__getTemplate('nonexistent')).to.be.undefined
+      expect(pageManagerElement.__getTemplate('nonexistent')).to.be.undefined
     })
   })
 
   describe('__getTemplateConstructor()', () =>{
     it('creates a single constructor for each template', () => {
-      const ctor = pageManager.__getTemplateConstructor('home')
+      const ctor = pageManagerElement.__getTemplateConstructor('home')
       assert(TemplateInstanceBase.prototype.isPrototypeOf(ctor.prototype))
 
-      expect(pageManager.__getTemplateConstructor('home')).to.equal(ctor)
-      expect(pageManager.__getTemplateConstructor('post')).to.not.equal(ctor)
+      expect(pageManagerElement.__getTemplateConstructor('home')).to.equal(ctor)
+      expect(pageManagerElement.__getTemplateConstructor('post')).to.not.equal(ctor)
     })
   })
 
   it('can insert a simple page', () => {
-    const homePage = pageManager.createPage('home')
+    const homePage = pageManagerElement._createPage('home')
     homePage.insertBefore(null)
     expect(getElement('.home-page')).to.exist
     expect(getElement('.home-page > h1').textContent).to.equal('Home')
@@ -54,9 +49,9 @@ describe('PageManager', () => {
     const comment1 = { author: 'Josef', content: 'Awesome' }
     const pageVar = { data: { title, content, comments: [comment1] } }
 
-    const postPage = pageManager.createPage('post')
-    postPage.templateVariable = pageVar
-    postPage.insertBefore(null)
+    const page = pageManagerElement._createPage('post')
+    page.pageVar = pageVar
+    page.insertBefore(null)
     await pause()
 
     expect(getElement('.post-page')).to.exist
@@ -68,7 +63,7 @@ describe('PageManager', () => {
     const comment2 = { author: 'MajorBreakfast', content: 'Perfect' }
     pageVar.data.comments.push(comment2)
     const change = { indexSplices: [{ index: 1, removed: [], addedCount: 1 }] }
-    postPage.forwardTemplateVariableChange('data.comments.splices', change)
+    page.forwardPageVarChange('data.comments.splices', change)
     await pause()
 
     expect(getTextContent('.post-page > .comments > li:nth-child(2)'))
@@ -78,7 +73,7 @@ describe('PageManager', () => {
   it('syncs host properties (host → page)', () => {
     // Set value, create and insert page
     wrapperElement.prop = 'value1'
-    const page = pageManager.createPage('value')
+    const page = pageManagerElement._createPage('value')
     page.insertBefore(null)
     const pageElement = page.element
     expect(getElement('.value-page').prop).to.equal('value1')
@@ -101,7 +96,7 @@ describe('PageManager', () => {
   it('syncs nested host properties (host → page)', () => {
     // Set value, create and insert page
     wrapperElement.prop = { a: { b: 'value1' } }
-    const page = pageManager.createPage('subproperty')
+    const page = pageManagerElement._createPage('subproperty')
     page.insertBefore(null)
     const pageElement = page.element
     expect(getElement('.subproperty-page').prop).to.equal('value1')
@@ -123,7 +118,7 @@ describe('PageManager', () => {
 
   it('syncs host properties (host ← page)', () => {
     // Create and insert page, set value on page
-    const page = pageManager.createPage('value')
+    const page = pageManagerElement._createPage('value')
     page.insertBefore(null)
     page.element.prop = 'value1'
     const pageElement = page.element
@@ -138,7 +133,7 @@ describe('PageManager', () => {
   it('syncs nested host properties (host ← page)', () => {
     // Create and insert page, set value on page
     wrapperElement.prop = { a: { b: 'initial value' } }
-    const page = pageManager.createPage('subproperty')
+    const page = pageManagerElement._createPage('subproperty')
     page.insertBefore(null)
     page.element.prop = 'value1'
     const pageElement = page.element
@@ -153,8 +148,8 @@ describe('PageManager', () => {
   it('syncs host properties (page1 ↔ host ↔ page2)', () => {
     // Set value, create and insert page
     wrapperElement.prop = 'value1'
-    const page1 = pageManager.createPage('value')
-    const page2 = pageManager.createPage('value')
+    const page1 = pageManagerElement._createPage('value')
+    const page2 = pageManagerElement._createPage('value')
     page1.insertBefore(null)
     page2.insertBefore(null)
     expect(wrapperElement.prop).to.equal('value1')
@@ -166,13 +161,19 @@ describe('PageManager', () => {
     expect(wrapperElement.prop).to.equal('value2')
     expect(getElement(':nth-last-child(2)').prop).to.equal('value2')
     expect(getElement(':nth-last-child(1)').prop).to.equal('value2')
+
+    // Change value
+    page2.element.set('prop', 'value3')
+    expect(wrapperElement.prop).to.equal('value3')
+    expect(getElement(':nth-last-child(2)').prop).to.equal('value3')
+    expect(getElement(':nth-last-child(1)').prop).to.equal('value3')
   })
 
-  it('syncs nested host properties (page1 → host → page2)', () => {
+  it('syncs nested host properties (page1 ↔ host ↔ page2)', () => {
     // Set value, create and insert page
     wrapperElement.prop = { a: { b: 'value1' } }
-    const page1 = pageManager.createPage('subproperty')
-    const page2 = pageManager.createPage('subproperty')
+    const page1 = pageManagerElement._createPage('subproperty')
+    const page2 = pageManagerElement._createPage('subproperty')
     page1.insertBefore(null)
     page2.insertBefore(null)
     expect(getElement(':nth-last-child(2)').prop).to.equal('value1')
@@ -184,5 +185,11 @@ describe('PageManager', () => {
     expect(getElement(':nth-last-child(2)').prop).to.equal('value2')
     expect(getElement(':nth-last-child(1)').prop).to.equal('value2')
     expect(wrapperElement.prop.a.b).to.equal('value2')
+
+    // Change value
+    page2.element.set('prop', 'value3')
+    expect(getElement(':nth-last-child(2)').prop).to.equal('value3')
+    expect(getElement(':nth-last-child(1)').prop).to.equal('value3')
+    expect(wrapperElement.prop.a.b).to.equal('value3')
   })
 })

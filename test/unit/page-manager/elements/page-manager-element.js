@@ -1,13 +1,8 @@
 import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
-import PageManager from '../../../../lib/page-manager.js'
+import PageManager from '../../../../lib/mixins/page-manager/page-manager.js'
 
-export default class PageManagerElement extends Element {
+export default class PageManagerElement extends PageManager(Element) {
   static get is () { return 'page-manager-element' }
-  static get properties () {
-    return {
-      pageManager: { value () { return new PageManager(this) } }
-    }
-  }
 }
 
 customElements.define(PageManagerElement.is, PageManagerElement)
