@@ -23,10 +23,14 @@ Read the usage guide on the page for the [https://www.webcomponents.org/element/
 - Pages aren't created lazily when they're needed
 
 `<iron-lazy-pages>`
-- Lazy creation of pages is done through `<dom-if>`, thus templates cannot be used for multiple pages.
+- Not animated
+- Lazy creation of pages is done through `<dom-if>`, thus a single template cannot be shared by multiple pages.
 
 ## Development
 To get your development environment set up, clone this repository and run `npm install`.
+
+### Visual Studio Code
+Install the `lit-html` extension to get syntax highlighting for the `html\`...\`` templates strings. (Note that this project does not use lit-html itself)
 
 ### Tests
 This project uses Web Component Tester to verify correct behavior across different browsers.
