@@ -1,5 +1,5 @@
-import { Element, html } from '../../../../@polymer/polymer/polymer-element.js'
-import PageManager from '../../../lib/page-manager.js'
+import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import PageManager from '../../../../lib/page-manager.js'
 
 export default class PageManagerElement extends Element {
   static get is () { return 'page-manager-element' }

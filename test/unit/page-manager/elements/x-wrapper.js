@@ -1,6 +1,10 @@
-import { Element, html } from '../../../../@polymer/polymer/polymer-element.js'
+import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import './page-manager-element.js'
+import './x-prop.js'
 
 const template = html`
+<div>prop: [[_toJSON(prop)]]</div>
+
 <page-manager-element id="page-manager-element">
   <template name="post">
     <div class="post-page">
@@ -22,24 +26,26 @@ const template = html`
   </template>
 
   <template name="value">
-    <div class="value-page">[[testValue]]</div>
+    <x-prop class="value-page" prop="{{prop}}"></x-prop>
   </template>
 
   <template name="subproperty">
-    <div class="subproperty-page">[[testValue.prop.subprop]]</div>
+    <x-prop class="subproperty-page" prop="{{prop.a.b}}"></x-prop>
   </template>
 </page-manager-element>`
 
-export default class WrapperElement extends Element {
-  static get is () { return 'wrapper-element' }
+export default class XWrapper extends Element {
+  static get is () { return 'x-wrapper' }
 
   static get template () { return template }
 
   static get properties () {
     return {
-      testValue: {}
+      prop: {}
     }
   }
+
+  _toJSON (x) { return JSON.stringify(x) }
 }
 
-customElements.define(WrapperElement.is, WrapperElement)
+customElements.define(XWrapper.is, XWrapper)

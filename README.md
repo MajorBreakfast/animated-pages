@@ -30,7 +30,7 @@ Read the usage guide on the page for the [https://www.webcomponents.org/element/
 To get your development environment set up, clone this repository and run `npm install`.
 
 ### Visual Studio Code
-Install the `lit-html` extension to get syntax highlighting for the `` html`...` `` templates strings. (Note that this project does not use lit-html itself)
+Install the `lit-html` extension to get syntax highlighting for the `` html`...` `` templates strings in JavaScript. (Note that this project does not use lit-html itself)
 
 ### Tests
 This project uses Web Component Tester to verify correct behavior across different browsers.
