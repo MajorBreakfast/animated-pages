@@ -2,8 +2,15 @@
   "name": "animated-pages",
   "description": "Web component for smooth page transitions",
   "version": "0.1.0",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/MajorBreakfast/animated-pages.git"
+  "scripts": {
+    "test": "wct --npm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MajorBreakfast/animated-pages.git"
+  },
+  "devDependencies": {
+    "wct-browser-legacy": "0.0.1-pre.11",
+    "web-component-tester": "^6.5.0"
   }
 }
