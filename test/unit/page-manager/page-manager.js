@@ -7,7 +7,6 @@ describe('PageManager', () => {
   let wrapperElement, pageManagerElement, getElement, getTextContent
   beforeEach(() => {
     wrapperElement = fixture('my-fixture')
-    document.body.appendChild(wrapperElement)
     pageManagerElement = wrapperElement.$['page-manager-element']
     getElement = selector => pageManagerElement.querySelector(selector)
     getTextContent = x => getElement(x) ? getElement(x).textContent : undefined

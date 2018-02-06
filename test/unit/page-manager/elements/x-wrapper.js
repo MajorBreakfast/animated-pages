@@ -3,7 +3,7 @@ import './page-manager-element.js'
 import './x-prop.js'
 
 const template = html`
-<div>prop: [[_toJSON(prop)]]</div>
+<div>prop: [[_toJSON(prop, prop.*)]]</div>
 
 <page-manager-element id="page-manager-element">
   <template name="post">
