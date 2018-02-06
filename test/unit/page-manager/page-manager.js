@@ -46,7 +46,7 @@ describe('PageManager', () => {
     homePage.insertBefore(null)
     expect(getElement('.home-page')).to.exist
     expect(getElement('.home-page > h1').textContent).to.equal('Home')
-    homePage.remove()
+    homePage.detach()
     expect(getElement('.home-page')).to.be.null
   })
 
@@ -89,8 +89,8 @@ describe('PageManager', () => {
     wrapperElement.prop = 'v2'
     expect(getElement('.value-page').prop).to.equal('v2')
 
-    // Change value while page is removed => Expect property to NOT sync!
-    page.remove()
+    // Change value while page is detached => Expect property to NOT sync!
+    page.detach()
     wrapperElement.prop = 'v3'
     expect(page.element.prop).to.equal('v2')
 
@@ -115,21 +115,21 @@ describe('PageManager', () => {
     expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v2')
     expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v2')
 
-    // Non-deep change value while page is removed => Expect NO sync
-    page.remove()
+    // Non-deep change value while page is detached => Expect NO sync
+    page.detach()
     const obj2 = { a: { b: 'v3' } }
     wrapperElement.prop = obj2
     expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v2')
     expect(page.element.querySelector('x-subprop').prop).to.equal(obj1)
     expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v2')
 
-    // Deep change while page is removed => Expect sync
+    // Deep change while page is detached => Expect sync
     wrapperElement.set('prop.a.b', 'v4')
     expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v4')
     expect(page.element.querySelector('x-subprop').prop).to.equal(obj2)
     expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v4')
 
-    // Deep change while page is removed (again) => Expect sync
+    // Deep change while page is detached (again) => Expect sync
     // There's an internal difference if a non-deep change was delayed previously
     wrapperElement.set('prop.a.b', 'v5')
     expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v5')
@@ -151,8 +151,8 @@ describe('PageManager', () => {
     const pageElement = page.element
     expect(wrapperElement.prop).to.equal('v1')
 
-    // Change page value while page is removed (should sync as well)
-    page.remove()
+    // Change page value while page is detached (should sync as well)
+    page.detach()
     page.element.prop = 'v2'
     expect(wrapperElement.prop).to.equal('v2')
   })
@@ -182,7 +182,7 @@ describe('PageManager', () => {
     expect(wrapperElement.prop).to.equal(obj2)
     expect(wrapperElement.prop.a.b).to.equal('v4')
 
-    page.remove()
+    page.detach()
 
     // Set value on page and expect sync
     page.element.querySelector('x-prop').prop = 'v5'
