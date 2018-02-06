@@ -1,6 +1,7 @@
 import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
 import './page-manager-element.js'
 import './x-prop.js'
+import './x-subprop.js'
 
 const template = html`
 <div>prop: [[_toJSON(prop, prop.*)]]</div>
@@ -30,7 +31,10 @@ const template = html`
   </template>
 
   <template name="subproperty">
-    <x-prop class="subproperty-page" prop="{{prop.a.b}}"></x-prop>
+    <div class="subproperty-page">
+      <x-prop prop="{{prop.a.b}}"></x-prop>
+      <x-subprop prop="{{prop}}"></x-subprop>
+    </div>
   </template>
 </page-manager-element>`
 
