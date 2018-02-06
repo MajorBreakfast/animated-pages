@@ -1,17 +1,17 @@
-*Currently in development (February 2018)*
+*Currently in development: Not ready for use (February 2018)*
 
 # Animated Pages
 The `<animated-pages>` element provides a flexible mechanism for animating
 between different pages of a web app.
 
-## Install
+## Installation
 **Polymer 3 only at the moment**
 ```
 npm i animated-pages
 ```
 
-## How to use
-Read the usage guide on the page for the [https://www.webcomponents.org/element/MajorBreakfast/animated-pages/elements/animated-pages](`<animated-pages>` Element).
+## Documentation
+Read the usage guide on the page for the [`<animated-pages>` Element](https://www.webcomponents.org/element/MajorBreakfast/animated-pages/elements/animated-pages).
 
 ## Comparison to other solutions
 `<iron-pages`:
