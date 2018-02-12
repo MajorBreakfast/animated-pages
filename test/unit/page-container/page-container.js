@@ -77,129 +77,149 @@ describe('PageContainer', () => {
       .to.equal(comment2.author + ': ' + comment2.content)
   })
 
-  it('syncs host properties (host → page)', () => {
-    // Set value, create and insert page
-    wrapperElement.prop = 'v1'
-    const page = pageContainerElement._createPage('value')
-    page.insertBefore(null)
-    const pageElement = page.element
-    expect(getElement('.value-page').prop).to.equal('v1')
+  for (let mode of ['detach page', 'change page visibility']) {
+    it(`syncs host properties (host → page, ${mode})`, () => {
+      // Set value, create and insert page
+      wrapperElement.prop = 'v1'
+      const page = pageContainerElement._createPage('value')
+      page.insertBefore(null)
+      const pageElement = page.element
+      expect(getElement('.value-page').prop).to.equal('v1')
 
-    // Change value
-    wrapperElement.prop = 'v2'
-    expect(getElement('.value-page').prop).to.equal('v2')
+      // Change value
+      wrapperElement.prop = 'v2'
+      expect(getElement('.value-page').prop).to.equal('v2')
 
-    // Change value while page is detached => Expect property to NOT sync!
-    page.detach()
-    wrapperElement.prop = 'v3'
-    expect(page.element.prop).to.equal('v2')
+      // Change value while page is detached => Expect property to NOT sync!
+      switch (mode) {
+        case 'detach page': page.detach(); break
+        case 'change page visibility': page.visible = false; break
+      }
+      wrapperElement.prop = 'v3'
+      expect(page.element.prop).to.equal('v2')
 
-    // Insert page, property should now be synced now
-    page.insertBefore(null)
-    expect(page.element).to.equal(pageElement) // Same element is reused
-    expect(getElement('.value-page').prop).to.equal('v3')
-  })
+      // Insert page, property should now be synced now
+      switch (mode) {
+        case 'detach page': page.insertBefore(null); break
+        case 'change page visibility': page.visible = true; break
+      }
+      expect(page.element).to.equal(pageElement) // Same element is reused
+      expect(getElement('.value-page').prop).to.equal('v3')
+    })
 
-  it('syncs nested host properties (host → page)', async () => {
-    // Set value, create and insert page
-    const obj1 = { a: { b: 'v1' } }
-    wrapperElement.prop = obj1
-    const page = pageContainerElement._createPage('subproperty')
-    page.insertBefore(null)
-    const pageElement = page.element
-    expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v1')
-    expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v1')
+    it(`syncs nested host properties (host → page, ${mode})`, () => {
+      // Set value, create and insert page
+      const obj1 = { a: { b: 'v1' } }
+      wrapperElement.prop = obj1
+      const page = pageContainerElement._createPage('subproperty')
+      page.insertBefore(null)
+      const pageElement = page.element
+      expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v1')
+      expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v1')
 
-    // Change value
-    wrapperElement.set('prop.a.b', 'v2')
-    expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v2')
-    expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v2')
+      // Change value
+      wrapperElement.set('prop.a.b', 'v2')
+      expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v2')
+      expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v2')
 
-    // Non-deep change value while page is detached => Expect NO sync
-    page.detach()
-    const obj2 = { a: { b: 'v3' } }
-    wrapperElement.prop = obj2
-    expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v2')
-    expect(page.element.querySelector('x-subprop').prop).to.equal(obj1)
-    expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v2')
+      // Non-deep change value while page is detached => Expect NO sync
+      switch (mode) {
+        case 'detach page': page.detach(); break
+        case 'change page visibility': page.visible = false; break
+      }
+      const obj2 = { a: { b: 'v3' } }
+      wrapperElement.prop = obj2
+      expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v2')
+      expect(page.element.querySelector('x-subprop').prop).to.equal(obj1)
+      expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v2')
 
-    // Deep change while page is detached => Expect sync
-    wrapperElement.set('prop.a.b', 'v4')
-    expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v4')
-    expect(page.element.querySelector('x-subprop').prop).to.equal(obj2)
-    expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v4')
+      // Deep change while page is detached => Expect sync
+      wrapperElement.set('prop.a.b', 'v4')
+      expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v4')
+      expect(page.element.querySelector('x-subprop').prop).to.equal(obj2)
+      expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v4')
 
-    // Deep change while page is detached (again) => Expect sync
-    // There's an internal difference if a non-deep change was delayed previously
-    wrapperElement.set('prop.a.b', 'v5')
-    expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v5')
-    expect(page.element.querySelector('x-subprop').prop).to.equal(obj2)
-    expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v5')
+      // Deep change while page is detached (again) => Expect sync
+      // There's an internal difference if a non-deep change was delayed previously
+      wrapperElement.set('prop.a.b', 'v5')
+      expect(page.element.querySelector('x-prop').shadowRoot.textContent).to.equal('v5')
+      expect(page.element.querySelector('x-subprop').prop).to.equal(obj2)
+      expect(page.element.querySelector('x-subprop').shadowRoot.textContent).to.equal('v5')
 
-    // Insert page
-    page.insertBefore(null)
-    expect(page.element).to.equal(pageElement) // Same element is reused
-    expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v5')
-    expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v5')
-  }).timeout(100000)
+      // Insert page
+      switch (mode) {
+        case 'detach page': page.insertBefore(null); break
+        case 'change page visibility': page.visible = true; break
+      }
+      expect(page.element).to.equal(pageElement) // Same element is reused
+      expect(getShadowTextContent('.subproperty-page x-prop')).to.equal('v5')
+      expect(getShadowTextContent('.subproperty-page x-subprop')).to.equal('v5')
+    })
 
-  it('syncs host properties (host ← page)', () => {
-    // Create and insert page, set value on page
-    const page = pageContainerElement._createPage('value')
-    page.insertBefore(null)
-    page.element.prop = 'v1'
-    const pageElement = page.element
-    expect(wrapperElement.prop).to.equal('v1')
+    it(`syncs host properties (host ← page, ${mode})`, () => {
+      // Create and insert page, set value on page
+      const page = pageContainerElement._createPage('value')
+      page.insertBefore(null)
+      page.element.prop = 'v1'
+      const pageElement = page.element
+      expect(wrapperElement.prop).to.equal('v1')
 
-    // Change page value while page is detached (should sync as well)
-    page.detach()
-    page.element.prop = 'v2'
-    expect(wrapperElement.prop).to.equal('v2')
-  })
+      // Change page value while page is detached (should sync as well)
+      switch (mode) {
+        case 'detach page': page.detach(); break
+        case 'change page visibility': page.visible = false; break
+      }
+      page.element.prop = 'v2'
+      expect(wrapperElement.prop).to.equal('v2')
+    })
 
-  it('syncs nested host properties (host ← page)', () => {
-    // Create and insert page
-    const obj1 = { a: { b: 'v1' } }
-    wrapperElement.prop = obj1
-    const page = pageContainerElement._createPage('subproperty')
-    page.insertBefore(null)
-    expect(wrapperElement.prop).to.equal(obj1)
-    expect(wrapperElement.prop.a.b).to.equal('v1')
+    it(`syncs nested host properties (host ← page, ${mode})`, () => {
+      // Create and insert page
+      const obj1 = { a: { b: 'v1' } }
+      wrapperElement.prop = obj1
+      const page = pageContainerElement._createPage('subproperty')
+      page.insertBefore(null)
+      expect(wrapperElement.prop).to.equal(obj1)
+      expect(wrapperElement.prop.a.b).to.equal('v1')
 
-    // Set value on page and expect sync
-    page.element.querySelector('x-prop').prop = 'v2'
-    expect(wrapperElement.prop).to.equal(obj1)
-    expect(wrapperElement.prop.a.b).to.equal('v2')
+      // Set value on page and expect sync
+      page.element.querySelector('x-prop').prop = 'v2'
+      expect(wrapperElement.prop).to.equal(obj1)
+      expect(wrapperElement.prop.a.b).to.equal('v2')
 
-    // Set value on page and expect sync
-    page.element.querySelector('x-subprop').prop.a.b = 'v3'
-    expect(wrapperElement.prop).to.equal(obj1)
-    expect(wrapperElement.prop.a.b).to.equal('v3')
+      // Set value on page and expect sync
+      page.element.querySelector('x-subprop').prop.a.b = 'v3'
+      expect(wrapperElement.prop).to.equal(obj1)
+      expect(wrapperElement.prop.a.b).to.equal('v3')
 
-    // Set value on page and expect sync
-    const obj2 = { a: { b: 'v4' } }
-    page.element.querySelector('x-subprop').prop = obj2
-    expect(wrapperElement.prop).to.equal(obj2)
-    expect(wrapperElement.prop.a.b).to.equal('v4')
+      // Set value on page and expect sync
+      const obj2 = { a: { b: 'v4' } }
+      page.element.querySelector('x-subprop').prop = obj2
+      expect(wrapperElement.prop).to.equal(obj2)
+      expect(wrapperElement.prop.a.b).to.equal('v4')
 
-    page.detach()
+      switch (mode) {
+        case 'detach page': page.detach(); break
+        case 'change page visibility': page.visible = false; break
+      }
 
-    // Set value on page and expect sync
-    page.element.querySelector('x-prop').prop = 'v5'
-    expect(wrapperElement.prop).to.equal(obj2)
-    expect(wrapperElement.prop.a.b).to.equal('v5')
+      // Set value on page and expect sync
+      page.element.querySelector('x-prop').prop = 'v5'
+      expect(wrapperElement.prop).to.equal(obj2)
+      expect(wrapperElement.prop.a.b).to.equal('v5')
 
-    // Set value on page and expect sync
-    page.element.querySelector('x-subprop').prop.a.b = 'v6'
-    expect(wrapperElement.prop).to.equal(obj2)
-    expect(wrapperElement.prop.a.b).to.equal('v6')
+      // Set value on page and expect sync
+      page.element.querySelector('x-subprop').prop.a.b = 'v6'
+      expect(wrapperElement.prop).to.equal(obj2)
+      expect(wrapperElement.prop.a.b).to.equal('v6')
 
-    // Set value on page and expect sync
-    const obj3 = { a: { b: 'v7' } }
-    page.element.querySelector('x-subprop').prop = obj3
-    expect(wrapperElement.prop).to.equal(obj3)
-    expect(wrapperElement.prop.a.b).to.equal('v7')
-  })
+      // Set value on page and expect sync
+      const obj3 = { a: { b: 'v7' } }
+      page.element.querySelector('x-subprop').prop = obj3
+      expect(wrapperElement.prop).to.equal(obj3)
+      expect(wrapperElement.prop.a.b).to.equal('v7')
+    })
+  }
 
   it('syncs host properties (page1 ↔ host ↔ page2)', () => {
     // Set value on host, create and insert page
