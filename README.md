@@ -14,7 +14,7 @@ npm i animated-pages
 Read the usage guide on the page for the [`<animated-pages>` Element](https://www.webcomponents.org/element/MajorBreakfast/animated-pages/elements/animated-pages).
 
 ## Comparison to other solutions
-`<iron-pages`:
+`<iron-pages>`:
 - Not animated
 - Pages aren't created lazily when they're needed
 
