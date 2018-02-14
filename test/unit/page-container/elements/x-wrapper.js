@@ -1,12 +1,12 @@
 import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
-import './page-container-element.js'
+import './page-container.js'
 import './x-prop.js'
 import './x-subprop.js'
 
 const template = html`
 <div>prop: [[_toJSON(prop, prop.*)]]</div>
 
-<page-container-element id="page-container-element">
+<page-container id="page-container">
   <template name="post">
     <div class="post-page">
       <h1>[[page.data.title]]</h1>
@@ -36,7 +36,7 @@ const template = html`
       <x-subprop prop="{{prop}}"></x-subprop>
     </div>
   </template>
-</page-container-element>`
+</page-container>`
 
 export default class XWrapper extends Element {
   static get is () { return 'x-wrapper' }
