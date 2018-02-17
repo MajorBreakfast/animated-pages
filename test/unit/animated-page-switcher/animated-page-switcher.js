@@ -19,8 +19,109 @@ describe('AnimatedPageSwitcher', () => {
     }
   })
 
-  it('bla', () => {
+  for (let restamp of [false, true]) {
+    it(`can play a sequence of page animations ` +
+       `(with${restamp ? '' : 'out'} restamp)`, async () => {
+      function grab (selector) {
+        const el = getElement(selector)
+        if (el) { return { text: el.textContent, hidden: el.hidden } }
+      }
 
-  })
+      const pageA = animatedPageSwitcher._createPage('a')
+      const pageB = animatedPageSwitcher._createPage('b')
+
+      let str = '';
+
+      // First animation (Show page A)
+      class Animation1 {
+        async play () { str += ',2'; await pause(); str += ',4' }
+      }
+      const animationPromise1 = animatedPageSwitcher._animateToPage(pageA, {
+        createAnimation () { str += '1'; return new Animation1() },
+        shouldRestampA () { str += ',5'; return restamp }
+      })
+      str += ',3';
+
+      expect(str).to.equal('1,2,3')
+      expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+      expect(grab('div:nth-of-type(2)')).to.not.exist
+
+      const ret1 = await animationPromise1 // Wait for animation to finish
+
+      expect(str).to.equal('1,2,3,4,5')
+      expect(ret1).to.eql({
+        happened: true,
+        animated: true,
+        animationCompleted: true
+      })
+      expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+      expect(grab('div:nth-of-type(2)')).to.not.exist
+
+      // Second animation (Page A -> Page B)
+      class Animation2 {
+        async play () { str += ',7'; await pause(); str += ',9' }
+      }
+      const animationPromise2 = animatedPageSwitcher._animateToPage(pageB, {
+        createAnimation () { str += ',6'; return new Animation2() },
+        shouldRestampA () { str += ',10'; return restamp }
+      })
+      str += ',8';
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8')
+      expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+      expect(grab('div:nth-of-type(2)')).to.eql({ text: 'B', hidden: false })
+
+      const ret2 = await animationPromise2 // Wait for animation to finish
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8,9,10')
+      expect(ret2).to.eql({
+        happened: true,
+        animated: true,
+        animationCompleted: true
+      })
+      if (restamp) {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'B', hidden: false })
+        expect(grab('div:nth-of-type(2)')).to.not.exist
+      } else {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: true })
+        expect(grab('div:nth-of-type(2)')).to.eql({ text: 'B', hidden: false })
+      }
+
+      // Third animation (Page B -> Page A)
+      class Animation3 {
+        async play () { str += ',12'; await pause(); str += ',14' }
+      }
+      const animationPromise3 = animatedPageSwitcher._animateToPage(pageA, {
+        createAnimation () { str += ',11'; return new Animation3() },
+        shouldRestampA () { str += ',15'; return restamp }
+      })
+      str += ',13';
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8,9,10,11,12,13')
+      if (restamp) {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'B', hidden: false })
+        expect(grab('div:nth-of-type(2)')).to.eql({ text: 'A', hidden: false })
+      } else {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+        expect(grab('div:nth-of-type(2)')).to.eql({ text: 'B', hidden: false })
+      }
+
+      const ret3 = await animationPromise3 // Wait for animation to finish
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8,9,10,11,12,13,14,15')
+      expect(ret3).to.eql({
+        happened: true,
+        animated: true,
+        animationCompleted: true
+      })
+      if (restamp) {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+        expect(grab('div:nth-of-type(2)')).to.not.exist
+      } else {
+        expect(grab('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+        expect(grab('div:nth-of-type(2)')).to.eql({ text: 'B', hidden: true })
+      }
+    })
+  }
 })
 

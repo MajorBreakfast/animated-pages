@@ -4,7 +4,7 @@ import AnimatedPageSwitcherMixin from '../../../../lib/mixins/animated-page-swit
 const SuperClass = AnimatedPageSwitcherMixin(Element)
 
 export default class AnimatedPageSwitcher extends SuperClass {
-  static get is () { return 'animated-page-swicher' }
+  static get is () { return 'animated-page-switcher' }
 }
 
 customElements.define(AnimatedPageSwitcher.is, AnimatedPageSwitcher)
