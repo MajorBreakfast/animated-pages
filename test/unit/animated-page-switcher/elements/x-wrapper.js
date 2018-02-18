@@ -16,6 +16,10 @@ const template = html`
   <template name="c">
     <div>C</div>
   </template>
+
+  <template name="d">
+    <div>D</div>
+  </template>
 </animated-page-switcher>`
 
 export default class XWrapper extends Element {
