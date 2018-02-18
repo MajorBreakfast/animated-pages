@@ -54,7 +54,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret1).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
       expect(study('div:nth-of-type(2)')).to.not.exist
@@ -81,7 +81,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret2).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'B', hidden: false })
@@ -118,7 +118,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret3).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
@@ -183,7 +183,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret1).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'B', hidden: false })
@@ -203,7 +203,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret2).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'C', hidden: false })
@@ -280,7 +280,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret1).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'B', hidden: false })
@@ -301,7 +301,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret3).to.eql({
         happened: true,
         animated: true,
-        animationCompleted: true
+        canceled: false
       })
       if (restamp) {
         expect(study('div:nth-of-type(1)')).to.eql({ text: 'D', hidden: false })
@@ -317,7 +317,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(ret2).to.eql({
         happened: false,
         animated: false,
-        animationCompleted: false
+        canceled: false
       })
       expect(await race2and3).to.equal(ret2)
     })
