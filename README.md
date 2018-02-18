@@ -29,6 +29,8 @@ Read the usage guide on the page for the [`<animated-pages>` Element](https://ww
 ## Development
 To get your development environment set up, clone this repository and run `npm install`.
 
+Bug reports, feature proposals and pull requests are welcome!
+
 ### Visual Studio Code
 Install the `lit-html` extension to get syntax highlighting for the `` html`...` `` templates strings in JavaScript. (Note that this project does not use lit-html itself)
 
