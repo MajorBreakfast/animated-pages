@@ -323,13 +323,22 @@ describe('AnimatedPageSwitcher', () => {
     })
   }
 
-  it(`can disable animations`, async () => {
+  for (let scenario of ['via property', 'via "display: none"']) {
+    it(`can disable animations (${scenario})`, async () => {
       function study (selector) {
         const el = getElement(selector)
         if (el) { return { text: el.textContent, hidden: el.hidden } }
       }
 
-      animatedPageSwitcher.disableAnimations = true
+      switch (scenario) {
+        case 'via property':
+          animatedPageSwitcher.disableAnimations = true
+          break
+        case 'via "display: none"':
+          animatedPageSwitcher.style.display = 'none'
+          break
+      }
+
       const pageA = animatedPageSwitcher._createPage('a')
       const pageB = animatedPageSwitcher._createPage('b')
 
@@ -340,7 +349,7 @@ describe('AnimatedPageSwitcher', () => {
         async play () { str += ',x2'; await pause(); str += ',x3' }
       }
       const animationPromise1 = animatedPageSwitcher._animateToPage(pageA, {
-        createAnimation () { str += 'x1'; return new Animation1() },
+        createAnimation () { str += ',x1'; return new Animation1() },
         shouldRestampA () { str += ',2'; return false }
       })
       str += '1';
@@ -362,5 +371,6 @@ describe('AnimatedPageSwitcher', () => {
       expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
       expect(study('div:nth-of-type(2)')).to.not.exist
     })
+  }
 })
 
