@@ -322,5 +322,45 @@ describe('AnimatedPageSwitcher', () => {
       expect(await race2and3).to.equal(ret2)
     })
   }
+
+  it(`can disable animations`, async () => {
+      function study (selector) {
+        const el = getElement(selector)
+        if (el) { return { text: el.textContent, hidden: el.hidden } }
+      }
+
+      animatedPageSwitcher.disableAnimations = true
+      const pageA = animatedPageSwitcher._createPage('a')
+      const pageB = animatedPageSwitcher._createPage('b')
+
+      let str = '';
+
+      // First animation (Show page A)
+      class Animation1 {
+        async play () { str += ',x2'; await pause(); str += ',x3' }
+      }
+      const animationPromise1 = animatedPageSwitcher._animateToPage(pageA, {
+        createAnimation () { str += 'x1'; return new Animation1() },
+        shouldRestampA () { str += ',2'; return false }
+      })
+      str += '1';
+
+      expect(str).to.equal('1')
+      expect(animatedPageSwitcher.animating).to.be.true
+      expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+      expect(study('div:nth-of-type(2)')).to.not.exist
+
+      const ret1 = await animationPromise1 // Wait for animation to finish
+
+      expect(str).to.equal('1,2')
+      expect(animatedPageSwitcher.animating).to.be.false
+      expect(ret1).to.eql({
+        happened: true,
+        animated: false,
+        canceled: false
+      })
+      expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
+      expect(study('div:nth-of-type(2)')).to.not.exist
+    })
 })
 
