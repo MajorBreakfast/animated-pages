@@ -342,6 +342,8 @@ describe('AnimatedPageSwitcher', () => {
       const pageA = animatedPageSwitcher._createPage('a')
       const pageB = animatedPageSwitcher._createPage('b')
 
+      const rafSpy = sinon.spy()
+      requestAnimationFrame(rafSpy)
       let str = '';
 
       // First animation (Show page A)
@@ -370,6 +372,9 @@ describe('AnimatedPageSwitcher', () => {
       })
       expect(study('div:nth-of-type(1)')).to.eql({ text: 'A', hidden: false })
       expect(study('div:nth-of-type(2)')).to.not.exist
+      expect(rafSpy).to.not.have.been.calledOnce
+      await pause('requestAnimationFrame')
+      expect(rafSpy).to.have.been.calledOnce
     })
   }
 })

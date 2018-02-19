@@ -1,3 +1,7 @@
 export default function pause (duration = 0) {
-  return new Promise(resolve => { setTimeout(resolve, duration) })
+  if (duration === 'requestAnimationFrame') {
+    return new Promise(resolve => { requestAnimationFrame(resolve) })
+  } else {
+    return new Promise(resolve => { setTimeout(resolve, duration) })
+  }
 }
