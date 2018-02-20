@@ -1,4 +1,4 @@
-import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import { Element } from '../../../../../@polymer/polymer/polymer-element.js'
 import AnimatedPageSwitcherMixin from '../../../../lib/mixins/animated-page-switcher/animated-page-switcher.js'
 
 const SuperClass = AnimatedPageSwitcherMixin(Element)

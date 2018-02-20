@@ -5,20 +5,20 @@ const template = html`
 <div>prop: [[_toJSON(prop, prop.*)]]</div>
 
 <animated-page-switcher id="animated-page-switcher">
-  <template name="a">
-    <div>A</div>
+  <template name="1">
+    <div>1</div>
   </template>
 
-  <template name="b">
-    <div>B</div>
+  <template name="2">
+    <div>2</div>
   </template>
 
-  <template name="c">
-    <div>C</div>
+  <template name="3">
+    <div>3</div>
   </template>
 
-  <template name="d">
-    <div>D</div>
+  <template name="4">
+    <div>4</div>
   </template>
 </animated-page-switcher>`
 
