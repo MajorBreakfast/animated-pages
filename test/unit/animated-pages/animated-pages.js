@@ -20,8 +20,20 @@ describe('<animated-pages>', () => {
   })
 
   it('can select a page via a string literal', async () => {
+    let createAnimationInput
+    animatedPages.createAnimation = (x) => { createAnimationInput = x }
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(getTextContent('div:nth-of-type(1)')).to.equal('1')
+    expect(createAnimationInput).to.eql({
+      elementA: undefined,
+      elementB: getElement('div:nth-of-type(1)'),
+      templateNameA: undefined,
+      templateNameB: '1',
+      idA: undefined,
+      idB: '1',
+      dataA: undefined,
+      dataB: undefined
+    })
   })
 })
