@@ -2,8 +2,6 @@ import { Element, html } from '../../../../../@polymer/polymer/polymer-element.j
 import './animated-page-switcher.js'
 
 const template = html`
-<div>prop: [[_toJSON(prop, prop.*)]]</div>
-
 <animated-page-switcher id="animated-page-switcher">
   <template name="1">
     <div>1</div>
