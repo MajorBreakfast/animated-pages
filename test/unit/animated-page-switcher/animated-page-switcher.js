@@ -360,7 +360,7 @@ describe('AnimatedPageSwitcher', () => {
 
       switch (scenario) {
         case 'via property':
-          animatedPageSwitcher.disableAnimations = true
+          animatedPageSwitcher.noAnimations = true
           break
         case 'via "display: none"':
           animatedPageSwitcher.style.display = 'none'
