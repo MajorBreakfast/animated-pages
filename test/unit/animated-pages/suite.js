@@ -1,6 +1,6 @@
 import '../../../../@polymer/polymer/polymer.js'
 import './elements/x-wrapper.js'
-import pause from '../../utils/pause.js'
+import pause from '../../../lib/utils/pause.js'
 
 describe('<animated-pages>', () => {
   let wrapperElement, animatedPages, getElement

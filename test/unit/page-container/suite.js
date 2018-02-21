@@ -1,7 +1,7 @@
 import '../../../../@polymer/polymer/polymer.js'
 import './elements/x-wrapper.js'
 import { TemplateInstanceBase } from '../../../../@polymer/polymer/lib/utils/templatize.js'
-import pause from '../../utils/pause.js'
+import pause from '../../../lib/utils/pause.js'
 
 describe('PageContainer', () => {
   let wrapperElement, pageContainer, getElement
