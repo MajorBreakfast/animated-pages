@@ -33,7 +33,7 @@ describe('AnimatedPageSwitcher', () => {
 
       let str = '';
 
-      // First animation (Show page 1)
+      // Animation 1: Show page 1
       class Animation1 {
         async play () { str += ',2'; await pause(); str += ',4' }
       }
@@ -64,7 +64,7 @@ describe('AnimatedPageSwitcher', () => {
       expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
       expect(study('div:nth-of-type(2)')).to.not.exist
 
-      // Second animation (page 1 -> page 2)
+      // Animation 2: Page 1 -> page 2
       class Animation2 {
         async play () { str += ',6'; await pause(); str += ',8' }
       }
@@ -99,7 +99,7 @@ describe('AnimatedPageSwitcher', () => {
         expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: false })
       }
 
-      // Third animation (page 2 -> page 1)
+      // Animation 3: Page 2 -> page 1
       class Animation3 {
         async play () { str += ',10'; await pause(); str += ',12' }
       }
@@ -136,6 +136,46 @@ describe('AnimatedPageSwitcher', () => {
         expect(study('div:nth-of-type(2)')).to.not.exist
       } else {
         expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
+        expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: true })
+      }
+
+      // Animation 4: Hide page 1
+      class Animation4 {
+        async play () { str += ',14'; await pause(); str += ',16' }
+      }
+      const promise4 = animatedPageSwitcher._enqueuePageChange(() => {
+        str += ',13'
+        return { pageB: undefined, animation: new Animation4() }
+      })
+      str += ',15';
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8,9,10,11,12,13,14,15')
+      expect(animatedPageSwitcher.animating).to.be.true
+      if (restamp) {
+        expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
+        expect(study('div:nth-of-type(2)')).to.not.exist
+      } else {
+        expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
+        expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: true })
+      }
+
+      const ret4 = await promise4 // Wait for animation to finish
+
+      expect(str).to.equal('1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16')
+      expect(animatedPageSwitcher.animating).to.be.false
+      expect(ret4).to.eql({
+        started: true,
+        pageA: page1,
+        pageB: undefined,
+        canceled: false,
+        animated: true,
+        reverted: false
+      })
+      if (restamp) {
+        expect(study('div:nth-of-type(1)')).to.not.exist
+        expect(study('div:nth-of-type(2)')).to.not.exist
+      } else {
+        expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: true })
         expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: true })
       }
     })
@@ -351,32 +391,40 @@ describe('AnimatedPageSwitcher', () => {
     })
   }
 
-  for (let scenario of ['via property', 'via "display: none"']) {
-    it(`can disable animations (${scenario})`, async () => {
+  for (let scenario of ['noAnimations property', '"display: none"']) {
+    it(`can disable animations (via ${scenario})`, async () => {
       function study (selector) {
         const el = getElement(selector)
         if (el) { return { text: el.textContent, hidden: el.hidden } }
       }
 
       switch (scenario) {
-        case 'via property':
+        case 'noAnimations property':
           animatedPageSwitcher.noAnimations = true
           break
-        case 'via "display: none"':
+        case '"display: none"':
           animatedPageSwitcher.style.display = 'none'
           break
       }
 
       const page1 = animatedPageSwitcher._createPage('1')
+      const page2 = animatedPageSwitcher._createPage('2')
 
       const rafSpy = sinon.spy()
       requestAnimationFrame(rafSpy)
 
-      // First animation (Show page 1)
+      // Animation 1: Show page 1
       let input1
       const promise1 = animatedPageSwitcher._enqueuePageChange((i1) => {
         input1 = i1
         return { pageB: page1, animation: { async play () {} } }
+      })
+
+      // Animation 2: Page 1 -> page 2
+      let input2
+      const promise2 = animatedPageSwitcher._enqueuePageChange((i2) => {
+        input2 = i2
+        return { pageB: page2, animation: { async play () {} } }
       })
 
       expect(input1).to.eql({ pageA: undefined, animated: false })
@@ -384,7 +432,9 @@ describe('AnimatedPageSwitcher', () => {
       expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
       expect(study('div:nth-of-type(2)')).to.not.exist
 
-      const ret1 = await promise1 // Wait for animation to finish
+      // Wait for animations to finish
+      const ret1 = await promise1
+      const ret2 = await promise2
 
       expect(animatedPageSwitcher.animating).to.be.false
       expect(ret1).to.eql({
@@ -395,11 +445,20 @@ describe('AnimatedPageSwitcher', () => {
         animated: false,
         reverted: false
       })
-      expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
-      expect(study('div:nth-of-type(2)')).to.not.exist
-      expect(rafSpy).to.not.have.been.calledOnce
+      expect(ret2).to.eql({
+        started: true,
+        pageA: page1,
+        pageB: page2,
+        canceled: false,
+        animated: false,
+        reverted: false
+      })
+      expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: true })
+      expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: false })
+
+      expect(rafSpy).to.not.have.been.called
       await pause('requestAnimationFrame')
-      expect(rafSpy).to.have.been.calledOnce
+      expect(rafSpy).to.have.been.called
     })
   }
 })
