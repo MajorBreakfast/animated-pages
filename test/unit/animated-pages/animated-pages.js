@@ -19,7 +19,7 @@ describe('<animated-pages>', () => {
     }
   })
 
-  it('Select page via string literal', async () => {
+  it('can select a page via a string literal', async () => {
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(getTextContent('div:nth-of-type(1)')).to.equal('1')
