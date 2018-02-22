@@ -25,8 +25,16 @@ describe('<animated-pages>', () => {
       if (el) { return { text: el.textContent, hidden: el.hidden } }
     }
 
+    class Animation {
+      async start () { await pause() }
+      stop () {}
+    }
+
     let createAnimationInput1
-    animatedPages.createAnimation = (x) => { createAnimationInput1 = x }
+    animatedPages.createAnimation = (x) => {
+      createAnimationInput1 = x
+      return new Animation()
+    }
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
@@ -38,11 +46,15 @@ describe('<animated-pages>', () => {
       idA: undefined,
       idB: '1',
       dataA: undefined,
-      dataB: undefined
+      dataB: undefined,
+      initialRender: true
     })
 
     let createAnimationInput2
-    animatedPages.createAnimation = (x) => { createAnimationInput2 = x }
+    animatedPages.createAnimation = (x) => {
+      createAnimationInput2 = x
+      return new Animation()
+    }
     animatedPages.selected = '2'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: true })
@@ -55,11 +67,15 @@ describe('<animated-pages>', () => {
       idA: '1',
       idB: '2',
       dataA: undefined,
-      dataB: undefined
+      dataB: undefined,
+      initialRender: false
     })
 
     let createAnimationInput3
-    animatedPages.createAnimation = (x) => { createAnimationInput3 = x }
+    animatedPages.createAnimation = (x) => {
+      createAnimationInput3 = x
+      return new Animation()
+    }
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
@@ -72,7 +88,8 @@ describe('<animated-pages>', () => {
       idA: '2',
       idB: '1',
       dataA: undefined,
-      dataB: undefined
+      dataB: undefined,
+      initialRender: false
     })
   })
 })
