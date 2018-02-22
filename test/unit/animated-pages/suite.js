@@ -30,15 +30,15 @@ describe('<animated-pages>', () => {
       stop () {}
     }
 
-    let createAnimationInput1
-    animatedPages.createAnimation = (x) => {
-      createAnimationInput1 = x
+    let createSegueInput1
+    animatedPages.createSegue = (x) => {
+      createSegueInput1 = x
       return new Animation()
     }
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
-    expect(createAnimationInput1).to.eql({
+    expect(createSegueInput1).to.eql({
       elementA: undefined,
       elementB: getElement('div:nth-of-type(1)'),
       templateNameA: undefined,
@@ -50,16 +50,16 @@ describe('<animated-pages>', () => {
       initialRender: true
     })
 
-    let createAnimationInput2
-    animatedPages.createAnimation = (x) => {
-      createAnimationInput2 = x
+    let createSegueInput2
+    animatedPages.createSegue = (x) => {
+      createSegueInput2 = x
       return new Animation()
     }
     animatedPages.selected = '2'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: true })
     expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: false })
-    expect(createAnimationInput2).to.eql({
+    expect(createSegueInput2).to.eql({
       elementA: getElement('div:nth-of-type(1)'),
       elementB: getElement('div:nth-of-type(2)'),
       templateNameA: '1',
@@ -71,16 +71,16 @@ describe('<animated-pages>', () => {
       initialRender: false
     })
 
-    let createAnimationInput3
-    animatedPages.createAnimation = (x) => {
-      createAnimationInput3 = x
+    let createSegueInput3
+    animatedPages.createSegue = (x) => {
+      createSegueInput3 = x
       return new Animation()
     }
     animatedPages.selected = '1'
     await animatedPages.finished
     expect(study('div:nth-of-type(1)')).to.eql({ text: '1', hidden: false })
     expect(study('div:nth-of-type(2)')).to.eql({ text: '2', hidden: true })
-    expect(createAnimationInput3).to.eql({
+    expect(createSegueInput3).to.eql({
       elementA: getElement('div:nth-of-type(2)'),
       elementB: getElement('div:nth-of-type(1)'),
       templateNameA: '2',
