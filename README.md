@@ -1,4 +1,18 @@
-*Currently in development: Not ready for use (February 2018)*
+*Currently in development: Partially working (February 2018)*
+
+<p align="center">
+  <img alt="animated pages" src="https://raw.githubusercontent.com/MajorBreakfast/animated-pages/master/doc/animated-pages.svg?sanitize=true" width="600">
+</p>
+
+<p align="center">
+  Web component for smooth page transitions
+</p>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/animated-pages">
+    <img alt="npm version" src="https://badge.fury.io/js/animated-pages.svg">
+  </a>
+</p>
 
 # Animated Pages
 The `<animated-pages>` element provides a flexible mechanism for animating
