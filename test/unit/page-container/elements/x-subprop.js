@@ -1,6 +1,6 @@
-import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import { PolymerElement, html } from '../../../../../@polymer/polymer/polymer-element.js'
 
-export default class XSubprop extends Element {
+export default class XSubprop extends PolymerElement {
   static get is () { return 'x-subprop' }
 
   static get template () { return html`[[prop.a.b]]` }

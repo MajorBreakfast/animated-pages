@@ -1,7 +1,7 @@
 {
   "name": "animated-pages",
   "description": "Web component for smooth page transitions",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "test": "wct --npm"
   },
@@ -10,10 +10,10 @@
     "url": "https://github.com/MajorBreakfast/animated-pages.git"
   },
   "dependencies": {
-    "@polymer/polymer": "^3.0.0-pre.10"
+    "@polymer/polymer": "^3.0.0-pre.12"
   },
   "devDependencies": {
-    "wct-browser-legacy": "0.0.1-pre.11",
+    "wct-browser-legacy": "^0.0.1-pre.11",
     "web-component-tester": "^6.5.0"
   }
 }

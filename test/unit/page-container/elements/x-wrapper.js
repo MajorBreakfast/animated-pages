@@ -1,4 +1,6 @@
-import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import { PolymerElement, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import '../../../../../@polymer/polymer/lib/elements/dom-repeat.js'
+
 import './page-container.js'
 import './x-prop.js'
 import './x-subprop.js'
@@ -38,7 +40,7 @@ const template = html`
   </template>
 </page-container>`
 
-export default class XWrapper extends Element {
+export default class XWrapper extends PolymerElement {
   static get is () { return 'x-wrapper' }
 
   static get template () { return template }

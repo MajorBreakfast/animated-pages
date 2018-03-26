@@ -1,4 +1,4 @@
-import { Element, html } from '../../../../../@polymer/polymer/polymer-element.js'
+import { PolymerElement, html } from '../../../../../@polymer/polymer/polymer-element.js'
 import '../../../../lib/animated-pages.js'
 
 const template = html`
@@ -7,7 +7,7 @@ const template = html`
   <template name="2"><div>2</div></template>
 </animated-pages>`
 
-export default class XWrapper extends Element {
+export default class XWrapper extends PolymerElement {
   static get is () { return 'x-wrapper' }
 
   static get template () { return template }

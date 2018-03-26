@@ -1,4 +1,3 @@
-import '../../../../@polymer/polymer/polymer.js'
 import './elements/x-wrapper.js'
 import pause from '../../../lib/utils/pause.js'
 
